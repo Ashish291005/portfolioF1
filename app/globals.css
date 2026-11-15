@@ -19,17 +19,49 @@
 }
 
 :root {
-  --background: #0D0D0D;
-  --foreground: #F0F0F0;
+  /* ── Palette: carbon / graphite ground, silver type, one signature red ── */
+  --carbon-950: #05070a;
+  --carbon-900: #0a0d12;
+  --graphite-800: #141a22;
+  --graphite-700: #1c2430;
+  --graphite-600: #2a3441;
+  --silver-400: #9aa5b1;
+  --silver-200: #c9d1da;
+  --white: #f4f7fa;
+  --f1-red: #e10600;
+  --f1-red-rgb: 225, 6, 0;
+
+  /* ── Spacing scale ── */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  /* ── Shape and motion ── */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --dur-fast: 160ms;
+  --dur: 240ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --line: rgba(222, 234, 247, 0.14);
+  --line-strong: rgba(222, 234, 247, 0.26);
+
+  /* ── Semantic (team accent is set at runtime by TeamContext) ── */
+  --background: var(--carbon-900);
+  --foreground: var(--white);
   --accent: #3671C6;
   --accent-rgb: 54, 113, 198;
   --accent-secondary: #FFD700;
+  --on-accent: #ffffff;
   --car-color: #3671C6;
-  --surface: #1A1A1A;
-  --surface-elevated: #242424;
-  --border-subtle: #2A2A2A;
-  --text-primary: #F0F0F0;
-  --text-secondary: #888888;
+  --surface: var(--graphite-800);
+  --surface-elevated: var(--graphite-700);
+  --border-subtle: var(--graphite-600);
+  --text-primary: var(--white);
+  --text-secondary: var(--silver-400);
   --telemetry-green: #00FF87;
   --sector-yellow: #FFD700;
 }
@@ -348,21 +380,33 @@ body {
 }
 
 /* ─── Scrollbar ─────────────────────────────────────────────── */
+html { scrollbar-color: var(--graphite-600) var(--carbon-950); scrollbar-width: thin; }
+
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: var(--carbon-950);
+  border-left: 1px solid var(--line);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-subtle);
-  border-radius: 3px;
+  background: linear-gradient(180deg, var(--graphite-600), var(--graphite-700));
+  border: 2px solid var(--carbon-950);
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(var(--accent-rgb), 0.5);
+  background: var(--f1-red);
+}
+
+/* ─── Focus: one visible ring everywhere ────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--white);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgba(var(--accent-rgb), 0.55);
+  border-radius: var(--radius-sm);
 }
 
 /* ─── Mobile Timeline ──────────────────────────────────────── */
@@ -1160,34 +1204,233 @@ body {
   .sound-toggle { right: 1rem; bottom: calc(1.3rem + env(safe-area-inset-bottom)); padding: 0.5rem 0.7rem; }
 }
 
-.resume-empty-shell {
-  width: min(58rem, calc(100vw - 2rem));
-  min-height: min(74vh, 48rem);
-  margin-top: 12vh;
-  border: 1px solid rgba(5, 8, 13, 0.18);
-  background: rgba(255, 255, 255, 0.72);
-  color: #11151b;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+/* ════════════════════════════════════════════════════════════════
+   Polish layer — contrast, racing details, motion
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Contrast: small telemetry text was too faint on the dark cards ── */
+.grid-meta span,
+.stat-strip span,
+.livery-control,
+.panel-sectors b { color: rgba(232, 239, 247, 0.78); }
+.hud-readout { color: rgba(244, 247, 250, 0.88); }
+.panel-lede { color: rgba(238, 243, 248, 0.88); }
+.panel-primary { color: var(--on-accent); text-shadow: none; }
+.resume-head span,
+.resume-fallback,
+.resume-credit { color: #3d444c; }
+
+/* ── Header: a soft shade so the HUD reads over any camera angle ── */
+.aero-hud { padding: var(--space-5) var(--space-6); }
+.aero-hud::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -2.5rem;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(5, 7, 10, 0.78), rgba(5, 7, 10, 0));
+  pointer-events: none;
+}
+.driver-mark { transition: opacity var(--dur-fast) ease; }
+.driver-mark:hover { opacity: 0.8; }
+
+/* rev-counter lap gauge: twelve segments, the last two in the red */
+.hud-readout { position: relative; }
+.hud-rev {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 0.45rem);
+  height: 4px;
+  background:
+    /* unlit segments cover everything past the current reading */
+    linear-gradient(90deg, transparent calc(var(--rev, 0) * 100%), #2b323b 0),
+    linear-gradient(90deg, var(--white) 0 83%, var(--f1-red) 83%);
+  -webkit-mask: repeating-linear-gradient(90deg, #000 0 calc(100% / 12 - 2px), transparent 0 calc(100% / 12));
+  mask: repeating-linear-gradient(90deg, #000 0 calc(100% / 12 - 2px), transparent 0 calc(100% / 12));
+  transform: skewX(-24deg);
+}
+
+/* once the resume page covers the circuit, the race HUD steps aside */
+.aero-hud,
+.sound-toggle { transition: opacity var(--dur) ease, visibility var(--dur) ease; }
+.race-shell[data-covered="true"] .aero-hud,
+.race-shell[data-covered="true"] .sound-toggle { opacity: 0; visibility: hidden; }
+
+/* ── Cards ── */
+.cinematic-panel { transition: border-color var(--dur) ease, box-shadow var(--dur) ease; }
+.cinematic-panel:hover {
+  border-color: rgba(var(--accent-rgb), 0.55);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(var(--accent-rgb), 0.18), 0 0 48px rgba(var(--accent-rgb), 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+/* content rolls in line by line each time a card arrives */
+.cinematic-panel-content > * { animation: panel-rise 280ms var(--ease-out) both; }
+.cinematic-panel-content > :nth-child(1) { animation-delay: 60ms; }
+.cinematic-panel-content > :nth-child(2) { animation-delay: 110ms; }
+.cinematic-panel-content > :nth-child(3) { animation-delay: 160ms; }
+.cinematic-panel-content > :nth-child(4) { animation-delay: 210ms; }
+.cinematic-panel-content > :nth-child(5) { animation-delay: 260ms; }
+.cinematic-panel-content > :nth-child(n + 6) { animation-delay: 310ms; }
+@keyframes panel-rise {
+  from { opacity: 0; translate: 0 10px; }
+  to { opacity: 1; translate: 0 0; }
+}
+.panel-sectors i { transition: background-color var(--dur) ease; }
+
+/* dividers drawn as a broken track centre-line */
+.grid-meta,
+.livery-control {
+  border-top: 0;
+  background: repeating-linear-gradient(90deg, rgba(222, 234, 247, 0.34) 0 14px, transparent 14px 24px) top left / 100% 1px no-repeat;
+}
+
+/* stats read like a timing screen */
+.stat-strip > div { transition: background-color var(--dur-fast) ease, translate var(--dur-fast) ease; }
+.stat-strip > div:hover { background: rgba(var(--accent-rgb), 0.16); translate: 0 -2px; }
+.stat-strip strong { font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+
+/* skills line up like a timing tower: numbered rows */
+.skill-wall { counter-reset: skill; }
+.skill-wall span { counter-increment: skill; }
+.skill-wall span::before {
+  content: counter(skill, decimal-leading-zero);
+  margin-right: 0.5rem;
+  color: var(--silver-400);
+  font-size: 0.56rem;
+  font-weight: 700;
+}
+
+/* buttons: quick, physical hover */
+.panel-primary,
+.panel-text-link,
+.resume-actions a,
+.sound-toggle,
+.team-btn { transition-duration: var(--dur-fast); }
+.panel-primary { position: relative; overflow: hidden; }
+.panel-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.32) 50%, transparent 70%);
+  translate: -120% 0;
+  transition: translate 280ms ease;
+}
+.panel-primary:hover::before { translate: 120% 0; }
+.panel-primary:active { filter: brightness(0.92); }
+
+/* ── Resume page: chequered flag where the lap ends ── */
+.resume-page::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 18%;
+  height: 18px;
+  background: conic-gradient(var(--white) 25%, var(--carbon-950) 0 50%, var(--white) 0 75%, var(--carbon-950) 0) 0 0 / 18px 18px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+}
+.resume-shell { position: relative; z-index: 1; border-radius: var(--radius-sm); }
+/* tyre-tread divider under the resume header */
+.resume-head { position: relative; border-bottom: 0; padding-bottom: calc(1.4rem + 10px); }
+.resume-head::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 10px;
+  background:
+    repeating-linear-gradient(60deg, #11151b 0 3px, transparent 3px 9px),
+    repeating-linear-gradient(-60deg, #11151b 0 3px, transparent 3px 9px);
+  opacity: 0.55;
+}
+.resume-actions a:hover { translate: 0 -2px; }
+@supports (animation-timeline: view()) {
+  .resume-shell {
+    animation: resume-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 45%;
+  }
+  @keyframes resume-reveal {
+    from { opacity: 0.2; translate: 0 48px; }
+    to { opacity: 1; translate: 0 0; }
+  }
+}
+
+/* ── Start-lights intro ── */
+.intro-lights {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--space-6);
+  /* swallows clicks during the countdown so nothing underneath is hit by accident */
+  pointer-events: auto;
+  background:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.025) 0 2px, transparent 2px 6px),
+    repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.3) 0 2px, transparent 2px 6px),
+    radial-gradient(circle at 50% 42%, var(--graphite-800), var(--carbon-950) 70%);
+}
+.intro-lights[data-lift="true"] { pointer-events: none; animation: intro-curtain 460ms cubic-bezier(0.7, 0, 0.3, 1) both; }
+.intro-gantry {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  gap: 0.9rem;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--carbon-950);
 }
-
-.resume-empty-shell span {
+/* lights out: every lamp goes dark at once */
+.intro-gantry[data-out="true"] span { background: #1a0707; box-shadow: inset 0 0 0 2px #000; transition-duration: 40ms; }
+.intro-gantry span {
+  width: clamp(1.5rem, 4vw, 2.3rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #23090a;
+  box-shadow: inset 0 0 0 2px #000;
+  transition: background-color 70ms linear, box-shadow 70ms linear;
+}
+.intro-gantry span[data-on="true"] {
+  background: var(--f1-red);
+  box-shadow: 0 0 34px rgba(var(--f1-red-rgb), 0.95), 0 0 90px rgba(var(--f1-red-rgb), 0.35), inset 0 0 0 2px #000;
+}
+.intro-hint {
+  margin: 0;
   font-family: var(--font-jetbrains), monospace;
-  font-size: 0.62rem;
-  font-weight: 800;
+  font-size: 0.58rem;
+  font-weight: 700;
   letter-spacing: 0.22em;
-  color: #4d545c;
+  color: var(--silver-400);
+  transition: opacity var(--dur) ease;
+  animation: panel-live 1.6s ease-in-out infinite;
 }
-
-.resume-empty-shell h2 {
-  margin-top: 1rem;
+.intro-hint[data-hidden="true"] { opacity: 0; animation: none; }
+.intro-title {
+  margin: 0;
   font-family: var(--font-orbitron), sans-serif;
-  font-size: clamp(1.8rem, 5vw, 4rem);
-  letter-spacing: -0.06em;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.32em;
+  color: var(--silver-200);
+}
+.intro-title b { margin-right: 0.6rem; font-size: 1.3rem; font-style: italic; letter-spacing: -0.06em; color: var(--f1-red); }
+.intro-chequer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 14px;
+  background: conic-gradient(var(--white) 25%, var(--carbon-950) 0 50%, var(--white) 0 75%, var(--carbon-950) 0) 0 0 / 14px 14px;
+  opacity: 0.85;
+}
+@keyframes intro-curtain {
+  to { translate: 0 -100%; opacity: 0.6; visibility: hidden; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro-lights { display: none; }
 }
 
 @media (max-width: 900px) {
@@ -1281,6 +1524,8 @@ body {
 
   /* Bottom lap-progress strip, broadcast style */
   .cinematic-panel-wrap { transform: none; }
+  .aero-hud::before { inset: 0 0 -1.5rem; }
+  .resume-page::before { height: 12px; background-size: 12px 12px; }
   .race-nav {
     top: auto;
     bottom: calc(0.6rem + env(safe-area-inset-bottom));

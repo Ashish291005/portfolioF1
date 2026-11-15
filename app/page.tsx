@@ -6,6 +6,7 @@ import { useTeam } from "@/app/context/TeamContext";
 import TeamSelector from "./components/TeamSelector";
 import CinematicPanels from "./components/CinematicPanels";
 import SoundToggle from "./components/SoundToggle";
+import IntroLights from "./components/IntroLights";
 import dynamic from "next/dynamic";
 import { FINISH_SCROLL, SECTOR_IDS, race } from "./components/scene/circuit";
 
@@ -19,6 +20,7 @@ export default function Home() {
   const [canvasCovered, setCanvasCovered] = useState(false);
   const tickingRef = useRef(false);
   const readoutRef = useRef<HTMLSpanElement>(null);
+  const hudRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
 
   // Handle scroll calculation and active sector detection
@@ -38,6 +40,7 @@ export default function Home() {
         const lap = Math.round(Math.min(1, race.scroll / FINISH_SCROLL) * 100);
         readoutRef.current.textContent = lap.toString().padStart(3, "0");
       }
+      hudRef.current?.style.setProperty("--rev", Math.min(1, race.scroll / FINISH_SCROLL).toFixed(3));
       progressRef.current?.style.setProperty("--lap", progress.toFixed(4));
     }
 
@@ -107,7 +110,8 @@ export default function Home() {
   };
 
   return (
-    <div className="race-shell">
+    <div className="race-shell" data-covered={canvasCovered}>
+      <IntroLights />
       <div className="cinematic-canvas">
         <F1Canvas3D activeSectorId={activeSectorId} paused={canvasCovered} />
       </div>
@@ -118,7 +122,11 @@ export default function Home() {
           <span style={{ color: team.accent }}>01</span>
           <span>ADITYA / PORTFOLIO</span>
         </button>
-        <div className="hud-readout"><i style={{ backgroundColor: team.accent }} /> LIVE CIRCUIT / <span ref={readoutRef}>000</span>%</div>
+        <div className="hud-readout" ref={hudRef}>
+          <i style={{ backgroundColor: team.accent }} /> LIVE CIRCUIT / <span ref={readoutRef}>000</span>%
+          {/* rev-counter style lap gauge, driven by --rev */}
+          <b className="hud-rev" aria-hidden="true" />
+        </div>
         <div className="hud-livery"><TeamSelector /></div>
       </header>
 

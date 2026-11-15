@@ -92,6 +92,19 @@ export default function CameraRig({ activeSectorId }: { activeSectorId: string }
     changedAt.current = performance.now() / 1000;
   }, [activeSectorId]);
 
+  // Gentle parallax: the camera leans a little toward the pointer.
+  const pointer = useRef({ x: 0, y: 0, sx: 0, sy: 0 });
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const onMove = (event: PointerEvent) => {
+      if (event.pointerType !== "mouse") return;
+      pointer.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+      pointer.current.y = (event.clientY / window.innerHeight) * 2 - 1;
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => window.removeEventListener("pointermove", onMove);
+  }, []);
+
   useFrame((state, rawDelta) => {
     const camera = state.camera as THREE.PerspectiveCamera;
     const size = state.size;
@@ -130,13 +143,17 @@ export default function CameraRig({ activeSectorId }: { activeSectorId: string }
     // Low shots stay on the track side of the barrier: beyond it the camera
     // would be standing in the middle of the fence-line crowd.
     let lateral = (s.side + sway) * pull;
+    const p = pointer.current;
+    p.sx += (p.x - p.sx) * (1 - Math.exp(-delta * 3));
+    p.sy += (p.y - p.sy) * (1 - Math.exp(-delta * 3));
+    lateral += p.sx * 0.45;
     if (s.height < 4) lateral = THREE.MathUtils.clamp(lateral, -5.4, 5.4);
 
     v.desired
       .copy(race.position)
       .addScaledVector(v.forward, s.forward * pull)
       .addScaledVector(v.left, lateral);
-    v.desired.y = s.height * (1.2 - 0.2 * wide) + Math.cos(time * 0.27) * s.sway * 0.12;
+    v.desired.y = Math.max(0.7, s.height * (1.2 - 0.2 * wide) + Math.cos(time * 0.27) * s.sway * 0.12 - p.sy * 0.22);
 
     if (first) camera.position.copy(v.desired);
     else camera.position.lerp(v.desired, 1 - Math.exp(-delta * 5.5));

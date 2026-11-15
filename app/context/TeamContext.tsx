@@ -37,6 +37,13 @@ export function TeamProvider({ children }: { children: ReactNode }) {
     root.style.setProperty("--accent-rgb", team.accentRgb);
     root.style.setProperty("--accent-secondary", team.secondary);
     root.style.setProperty("--car-color", team.carColor);
+    // Text on top of the team colour: dark on light liveries, white on dark ones
+    const [r, g, b] = team.accentRgb.split(",").map((part) => {
+      const c = Number(part) / 255;
+      return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    });
+    const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    root.style.setProperty("--on-accent", luminance > 0.22 ? "#05080d" : "#ffffff");
   }, [teamId]);
 
   const setTeam = useCallback((id: TeamId) => {
