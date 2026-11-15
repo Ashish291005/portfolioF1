@@ -24,13 +24,17 @@ export default function CinematicPanels({
   const { team } = useTeam();
   const projectIndex = Number(activeSectorId.replace("sector-", "")) - 2;
   const activeProject = projects[projectIndex];
+  // big number on the card: matches the sector label (SECTOR 2 → 02)
   const panelNumber = activeProject
     ? projectIndex + 2
     : activeSectorId === "sector-pit"
-      ? 7
+      ? projects.length + 2
       : activeSectorId === "sector-finish"
-        ? 8
+        ? projects.length + 3
         : 1;
+  // position on the lap strip: every card counts, including the grid and about
+  const stepNumber = activeSectorId === "hero" ? 1 : panelNumber + 1;
+  const totalPanels = projects.length + 4; // grid, about, projects…, pit, finish
   const placementMap: Record<string, string> = {
     hero: "left-low",
     "sector-1": "right-mid",
@@ -41,7 +45,16 @@ export default function CinematicPanels({
     "sector-pit": "left-low",
     "sector-finish": "right-high",
   };
-  const placement = placementMap[activeSectorId] ?? "left-low";
+  // sector-1 is the about panel; the pit/finish panels keep alternating
+  // sides after however many projects there are
+  const placement =
+    activeSectorId === "sector-1"
+      ? "right-mid"
+      : activeSectorId === "sector-pit"
+        ? projects.length % 2 === 0 ? "left-low" : "right-low"
+        : activeSectorId === "sector-finish"
+          ? projects.length % 2 === 0 ? "right-high" : "left-high"
+          : placementMap[activeSectorId] ?? "left-low";
   const fromRight = placement.startsWith("right");
 
   if (activeSectorId === "sector-resume") {
@@ -70,8 +83,9 @@ export default function CinematicPanels({
         <a className="panel-text-link" href={`mailto:${contactInfo.email}`}>CONTACT</a>
       </div>
       <div className="livery-control">
-        <span>CHOOSE LIVERY</span>
+        <span>CHOOSE YOUR CAR</span>
         <TeamSelector />
+        <strong className="car-name" style={{ color: team.accent }}>{team.carName}</strong>
       </div>
     </section>
   );
@@ -150,6 +164,15 @@ export default function CinematicPanels({
             {panelNumber.toString().padStart(2, "0")}
           </div>
           {panel}
+          {/* lap strip: one cell per checkpoint, like a timing-screen sector bar */}
+          <div className="panel-sectors" aria-hidden="true">
+            {Array.from({ length: totalPanels }, (_, i) => (
+              <i key={i} data-state={i + 1 < stepNumber ? "done" : i + 1 === stepNumber ? "live" : "ahead"} />
+            ))}
+            <b>
+              {stepNumber.toString().padStart(2, "0")} / {totalPanels.toString().padStart(2, "0")}
+            </b>
+          </div>
         </motion.div>
       </AnimatePresence>
     </div>

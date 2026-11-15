@@ -47,26 +47,33 @@ export const driverProfile: DriverProfile = {
   title: "Full Stack Developer",
   number: "01",
   avatar: "/avatar.png",
-  bio: "A passionate full-stack developer with a relentless drive for building high-performance web experiences. From concept to deployment, I engineer solutions that are fast, beautiful, and built to last.",
+  bio: "Computer Science undergraduate at Chitkara University building full-stack, AI-integrated web applications with React, Next.js, Node.js and MongoDB/PostgreSQL on a strong DSA foundation. Shipped real-world software as a freelancer, including a recruitment platform for a U.S. staffing firm and a kitchen order system for a local restaurant.",
   stats: [
-    { label: "YEARS EXP", value: "3", unit: "YRS" },
-    { label: "PROJECTS", value: "12", unit: "BUILT" },
-    { label: "COMMITS", value: "2.4K", unit: "TOTAL" },
-    { label: "TOP SPEED", value: "99", unit: "WPM" },
+    { label: "CGPA", value: "9.71", unit: "/ 10" },
+    { label: "REEL VIEWS", value: "60K+", unit: "OSC" },
+    { label: "CODE FOR GOOD FINALIST", value: "JPMC" },
+    { label: "FREELANCE CLIENTS", value: "2", unit: "SHIPPED" },
   ],
 };
 
 // ─── Projects ────────────────────────────────────────────────────
+// Add `link` / `github` to a project to show its VIEW PROJECT / SOURCE CODE buttons.
 export const projects: Project[] = [
   {
     id: "sentinel",
-    title: "Sentinel AI",
+    title: "Sentinel",
     description:
-      "A multi-agent scam detection platform that analyzes job posts using five specialized Gemini-powered AI agents. Features real-time trust scoring, X API integration, and Firecrawl-powered organization verification.",
-    tech: ["Next.js", "Gemini AI", "Express", "TypeScript"],
-    link: "https://sentinel-ai.vercel.app",
-    github: "https://github.com/aditya/sentinel-ai",
+      "An AI-powered job scam detection platform. Multi-agent orchestration analyzes job postings, recruiter profiles and historical X activity to produce structured fraud-risk assessments, alongside a resume/LinkedIn analyzer, voice-evaluated interview practice and community scam reporting.",
+    tech: ["Next.js", "PostgreSQL", "Prisma", "AI Agents", "Google Generative AI", "X API"],
     sector: "SECTOR 2",
+  },
+  {
+    id: "curifix",
+    title: "Curifix",
+    description:
+      "A full-stack AI healthcare platform: an AI doctor chatbot, symptom assessment and lab-report summaries with Gemini and LangChain, real-time video consultations over WebRTC, and location-based doctor and hospital discovery with medicine reminders and emergency alerts.",
+    tech: ["React", "Node.js", "MongoDB", "Socket.io", "WebRTC", "Gemini"],
+    sector: "SECTOR 3",
   },
   {
     id: "kesari",
@@ -74,71 +81,50 @@ export const projects: Project[] = [
     description:
       "A full-stack restaurant management system with real-time order tracking, thermal printer integration, inventory management, and detailed analytics dashboards for multi-table service.",
     tech: ["React", "Node.js", "Socket.io", "PostgreSQL"],
-    link: "https://kesari-pos.vercel.app",
-    github: "https://github.com/aditya/kesari",
-    sector: "SECTOR 3",
-  },
-  {
-    id: "raceview",
-    title: "RaceView Live",
-    description:
-      "Real-time Formula 1 telemetry dashboard that streams live timing data, visualizes car positions on track, and displays driver performance metrics with sub-second refresh rates.",
-    tech: ["React", "WebSocket", "D3.js", "Python"],
-    github: "https://github.com/aditya/raceview",
     sector: "SECTOR 4",
-  },
-  {
-    id: "cloudnest",
-    title: "CloudNest",
-    description:
-      "A self-hosted cloud storage platform with end-to-end encryption, real-time sync, file sharing with granular permissions, and a responsive file manager with drag-and-drop support.",
-    tech: ["Next.js", "AWS S3", "Prisma", "tRPC"],
-    link: "https://cloudnest.dev",
-    github: "https://github.com/aditya/cloudnest",
-    sector: "SECTOR 5",
   },
 ];
 
 // ─── Skills ──────────────────────────────────────────────────────
+// `level` is only used by the (currently unused) SkillsSection bars — adjust to taste.
 export const skills: Skill[] = [
   // Languages
-  { name: "TypeScript", category: "languages", level: 95 },
-  { name: "JavaScript", category: "languages", level: 95 },
-  { name: "Python", category: "languages", level: 80 },
-  { name: "HTML/CSS", category: "languages", level: 95 },
+  { name: "JavaScript", category: "languages", level: 90 },
+  { name: "TypeScript", category: "languages", level: 90 },
+  { name: "Java", category: "languages", level: 75 },
+  { name: "Python", category: "languages", level: 70 },
   { name: "SQL", category: "languages", level: 75 },
-  { name: "Rust", category: "languages", level: 40 },
+  { name: "C", category: "languages", level: 65 },
 
   // Frameworks
-  { name: "React", category: "frameworks", level: 95 },
+  { name: "React", category: "frameworks", level: 90 },
   { name: "Next.js", category: "frameworks", level: 90 },
   { name: "Node.js", category: "frameworks", level: 85 },
-  { name: "Express", category: "frameworks", level: 85 },
-  { name: "Tailwind CSS", category: "frameworks", level: 90 },
-  { name: "GSAP", category: "frameworks", level: 70 },
+  { name: "Express.js", category: "frameworks", level: 85 },
+  { name: "Prisma", category: "frameworks", level: 80 },
+  { name: "LangChain", category: "frameworks", level: 70 },
+  { name: "Tailwind CSS", category: "frameworks", level: 85 },
 
   // Tools
-  { name: "Git", category: "tools", level: 90 },
   { name: "Docker", category: "tools", level: 70 },
-  { name: "Figma", category: "tools", level: 75 },
-  { name: "VS Code", category: "tools", level: 95 },
-  { name: "Vercel", category: "tools", level: 85 },
-  { name: "Linux", category: "tools", level: 75 },
+  { name: "NGINX", category: "tools", level: 65 },
+  { name: "CI/CD", category: "tools", level: 65 },
+  { name: "AWS", category: "tools", level: 65 },
+  { name: "Google Cloud", category: "tools", level: 60 },
+  { name: "Git", category: "tools", level: 85 },
 
   // Databases
   { name: "PostgreSQL", category: "databases", level: 80 },
-  { name: "MongoDB", category: "databases", level: 75 },
+  { name: "MongoDB", category: "databases", level: 80 },
+  { name: "MySQL", category: "databases", level: 70 },
   { name: "Redis", category: "databases", level: 65 },
-  { name: "Prisma", category: "databases", level: 80 },
 ];
 
 // ─── Contact ─────────────────────────────────────────────────────
 export const contactInfo: ContactInfo = {
-  email: "hello@aditya.dev",
-  github: "https://github.com/aditya",
-  linkedin: "https://linkedin.com/in/aditya",
-  twitter: "https://x.com/aditya",
-  resumeLink: "/resume.pdf",
+  email: "adityadgr29@gmail.com",
+  github: "https://github.com/adityash2006",
+  resumeLink: "/aditya_sharma_resume.pdf",
 };
 
 // ─── Team Definitions ────────────────────────────────────────────
@@ -151,6 +137,10 @@ export interface Team {
   accentRgb: string;
   secondary: string;
   carColor: string;
+  /** Car shown on track for this team */
+  carName: string;
+  /** glTF served from /public */
+  carModel: string;
 }
 
 export const teams: Record<TeamId, Team> = {
@@ -161,6 +151,8 @@ export const teams: Record<TeamId, Team> = {
     accentRgb: "0, 161, 156",
     secondary: "#C6C6C6",
     carColor: "#00A19C",
+    carName: "Mercedes W17",
+    carModel: "/model3/scene.web.gltf",
   },
   ferrari: {
     id: "ferrari",
@@ -169,6 +161,8 @@ export const teams: Record<TeamId, Team> = {
     accentRgb: "232, 0, 45",
     secondary: "#FFF200",
     carColor: "#E8002D",
+    carName: "Ferrari SF-26",
+    carModel: "/model2/scene.web.gltf",
   },
   redbull: {
     id: "redbull",
@@ -177,5 +171,7 @@ export const teams: Record<TeamId, Team> = {
     accentRgb: "54, 113, 198",
     secondary: "#FFD700",
     carColor: "#3671C6",
+    carName: "Red Bull RB22",
+    carModel: "/model1/scene.web.gltf",
   },
 };
